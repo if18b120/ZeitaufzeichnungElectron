@@ -1,0 +1,85 @@
+Table Employees {
+  Id integer
+  Name varchar
+  Surname varchar
+  Password varchar
+}
+
+Table WorkDayProfiles {
+  Id integer
+  Name varchar
+  Break bool
+  BreakTime integer
+}
+
+Table ShiftProfiles {
+  Id integer
+  Start integer
+  End integer
+  Profile_Id integer
+}
+
+Table WorkDays {
+  Id integer
+  Dat date
+  Target number
+  Actual number
+  Overtime number
+  Break bool
+  BreakTime integer
+  WorkMonth_Id integer
+}
+
+Table WorkMonth {
+  Id integer
+  Month yearmonth
+  Target number
+  Actual number
+  Overtime number
+  Employee_Id integer
+}
+
+Table Shifts {
+  Id integer
+  Start integer
+  End integer
+  WorkDays_Id integer
+}
+
+Table CalculationPeriod {
+  Id integer
+  StartDate Date
+  EndDate Date
+  MondayProfile integer
+  TuesdayProfile integer
+  WednesdayProfile integer
+  ThursdayProfile integer
+  FridayProfile integer
+  SaturdayProfile integer
+  SundayProfile integer
+  Employee_Id integer
+}
+
+Ref: Shifts.WorkDays_Id > WorkDays.Id
+
+Ref: ShiftProfiles.Profile_Id > WorkDayProfiles.Id
+
+Ref: WorkDays.WorkMonth_Id > WorkMonth.Id
+
+Ref: WorkMonth.Employee_Id > Employees.Id
+
+Ref: CalculationPeriod.Employee_Id > Employees.Id
+
+Ref: CalculationPeriod.MondayProfile > WorkDayProfiles.Id
+
+Ref: CalculationPeriod.TuesdayProfile > WorkDayProfiles.Id
+
+Ref: CalculationPeriod.WednesdayProfile > WorkDayProfiles.Id
+
+Ref: CalculationPeriod.ThursdayProfile > WorkDayProfiles.Id
+
+Ref: CalculationPeriod.FridayProfile > WorkDayProfiles.Id
+
+Ref: CalculationPeriod.SaturdayProfile > WorkDayProfiles.Id
+
+Ref: CalculationPeriod.SundayProfile > WorkDayProfiles.Id
