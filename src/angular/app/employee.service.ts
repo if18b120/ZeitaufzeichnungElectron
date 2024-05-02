@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Employee } from '../../model/Employee';
 
 @Injectable({
   providedIn: 'root'
@@ -6,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class EmployeeService {
 
   constructor() { }
-  getEmployees() {
+  getEmployees(): Promise<Employee[]>  {
     return (<any>window).electronAPI.getEmployees();
   }
 }

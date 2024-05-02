@@ -1,7 +1,7 @@
-import { Employee } from "../angular/app/model/Employee";
+import { Employee } from "../model/Employee";
 
-const { contextBridge, ipcMain } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    getEmployees: () => <Employee[]>ipcMain.invoke('get-employees')
+    getEmployees: () => <Employee[]>ipcRenderer.invoke('get-employees')
 })

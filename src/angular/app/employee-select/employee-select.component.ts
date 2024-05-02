@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Employee } from '../model/Employee';
+import { Employee } from '../../../model/Employee';
 import { EmployeeService } from '../employee.service';
 
 @Component({
@@ -11,5 +11,9 @@ import { EmployeeService } from '../employee.service';
 })
 export class EmployeeSelectComponent {
     constructor(private employeeService: EmployeeService){}
-    employees: Employee[] = this.employeeService.getEmployees();
+    employees: Employee[] = [];
+
+    load() {
+        this.employeeService.getEmployees().then((value) => this.employees = value);
+    }
 }

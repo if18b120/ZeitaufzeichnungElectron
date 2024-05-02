@@ -10,8 +10,8 @@
           "style": "scss"
         }
       },
-      "root": "",
-      "sourceRoot": "",
+      "root": "src/angular",
+      "sourceRoot": "src/angular",
       "prefix": "app",
       "architect": {
         "build": {
