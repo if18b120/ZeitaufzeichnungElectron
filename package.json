@@ -1,10 +1,10 @@
 {
   "name": "zeitaufzeichnung-electron",
   "version": "0.0.0",
-  "main": "dist/main.js",
+  "main": "dist/electron/main.js",
   "scripts": {
     "ng": "ng",
-    "build": "ng build --base-href ./ && tsc ./main.ts --outDir ./dist",
+    "build": "ng build && tsc ./src/electron/*.ts --outDir ./dist",
     "start": "electron .",
     "bs": "npm run build && npm run start",
     "watch": "ng build --watch --configuration development",
