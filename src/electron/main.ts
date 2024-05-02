@@ -1,4 +1,4 @@
-import { Employee } from "./src/app/model/Employee";
+import { Employee } from "../angular/app/model/Employee";
 
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
