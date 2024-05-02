@@ -1,7 +1,7 @@
 import { Employee } from "./src/app/model/Employee";
 
-const { contextBridge, ipcBra } = require('electron')
+const { contextBridge, ipcMain } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    getEmployees: () => <Employee[]>ipcBra.invoke('get-employees')
+    getEmployees: () => <Employee[]>ipcMain.invoke('get-employees')
 })

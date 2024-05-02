@@ -11,5 +11,5 @@ import { EmployeeService } from '../employee.service';
 })
 export class EmployeeSelectComponent {
     constructor(private employeeService: EmployeeService){}
-    employees: Employee[] = this.employeeService.getEmployees()
+    employees: Employee[] = this.employeeService.getEmployees();
 }

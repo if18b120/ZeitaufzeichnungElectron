@@ -1,12 +1,18 @@
 import { Employee } from "./src/app/model/Employee";
 
-const { app, BrowserWindow, ipcBra } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
 
 let win;
 function createWindow() {
-    win = new BrowserWindow({ width: 800, height: 600 });
+    win = new BrowserWindow({ 
+        width: 800, 
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+     });
     win.setMenu(null)
     win.webContents.openDevTools();
     // load the dist folder from Angular
@@ -24,7 +30,7 @@ function createWindow() {
     });
 }
 app.whenReady().then(() => {
-    ipcBra.handle("get-employees", () => {
+    ipcMain.handle("get-employees", () => {
         return [
             new Employee("Foo", "Bar"),
             new Employee("The", "Quick"),
@@ -33,6 +39,7 @@ app.whenReady().then(() => {
             new Employee("Lazy", "Dog")
         ]
     })
+    createWindow();
 })
 // app.on("ready", createWindow);
 // on macOS, closing the window doesn't quit the app
