@@ -1,7 +1,7 @@
 import { Employee } from "../model/Employee";
 import { BrowserWindow, app, ipcMain } from "electron";
-import path from "path";
-import url from "url";
+import * as path from "path";
+import * as url from "url";
 
 let win;
 function createWindow() {
