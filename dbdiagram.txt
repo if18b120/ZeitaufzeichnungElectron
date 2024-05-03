@@ -60,6 +60,10 @@ Table CalculationPeriod {
   Employee_Id integer
 }
 
+Table Admin {
+  Password varchar
+}
+
 Ref: Shifts.WorkDays_Id > WorkDays.Id
 
 Ref: ShiftProfiles.Profile_Id > WorkDayProfiles.Id
