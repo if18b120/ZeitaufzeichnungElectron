@@ -64,6 +64,10 @@ Table Admin {
   Password varchar
 }
 
+Table Mode {
+  Mode text
+}
+
 Ref: Shifts.WorkDays_Id > WorkDays.Id
 
 Ref: ShiftProfiles.Profile_Id > WorkDayProfiles.Id
