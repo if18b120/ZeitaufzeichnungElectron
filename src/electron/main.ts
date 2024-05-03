@@ -5,13 +5,11 @@ import url from "url";
 
 let win;
 function createWindow() {
-    win = new BrowserWindow({ 
-        width: 800, 
-        height: 600,
+    win = new BrowserWindow({
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
-     });
+    });
     win.setMenu(null)
     win.webContents.openDevTools();
     // load the dist folder from Angular
