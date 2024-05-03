@@ -1,0 +1,28 @@
+@switch (state) {
+    @case (connectionStateEnum().CONNECTING) {
+        <div>Datenbankverbindung wird aufgebaut...</div>
+    }
+    @case (connectionStateEnum().FAILED) {
+        <div>
+            <div>
+                Es konnte keine Datenbankverbindung hergestellt werden!
+            </div>
+            <div>
+                Soll eine neue Datenbank erstellt werden? Eine neue Datenbank sollte nur erstellt werden, falls noch keine Vorhanden ist!
+            </div>
+            <button (click)="createNew()">Ja</button>
+            <button (click)="abortInit()">Nein</button>
+        </div>
+    }
+    @case (connectionStateEnum().CRITICAL) {
+        <div>Ein kritischer Fehler ist aufgetreten</div>
+        <div>{{errorMessage}}</div>
+        <button (click)="close()">Schließen</button>
+    }
+    @case (connectionStateEnum().CONFIGURE) {
+
+    }
+    @default {
+        <div>Ein unerwarteter Zustand ist eingetreten!</div>
+    }
+}

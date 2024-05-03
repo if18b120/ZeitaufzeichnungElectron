@@ -1,8 +1,6 @@
-@if (true) {
-<employee-select></employee-select>
+@if (!databaseConnectionEstablished) {
+    <startup></startup>
 } @else {
-<div>
-    user selected
-</div>
+    <employee-select></employee-select>
+    <calendar></calendar>
 }
-<calendar></calendar>
