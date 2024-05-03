@@ -1,8 +1,7 @@
 import { Employee } from "../model/Employee";
-
-const { app, BrowserWindow, ipcMain } = require("electron");
-const path = require("path");
-const url = require("url");
+import { BrowserWindow, app, ipcMain } from "electron";
+import path from "path";
+import url from "url";
 
 let win;
 function createWindow() {
