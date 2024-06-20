@@ -51,4 +51,8 @@ export class Connection {
             });
         });
     }
+
+    close() {
+        this.db?.close();
+    }
 }

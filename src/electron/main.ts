@@ -54,6 +54,10 @@ app.whenReady().then(() => {
     ipcMain.handle("createNewConnection", () => {
         return appInjector.resolve("connection").create();
     })
+    ipcMain.handle("shutdown", () => {
+        appInjector.resolve("connection").close();
+        app.quit();
+    })
     createWindow();
 })
 // app.on("ready", createWindow);

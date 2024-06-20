@@ -10,7 +10,7 @@ import { ConnectionState } from '../../../model/ConnectionState';
     styleUrl: './startup.component.scss'
 })
 export class StartupComponent {
-    @Output() connectionStateEmitter = new EventEmitter<Error | null>();
+    @Output() connectionStateEvent = new EventEmitter<ConnectionState>();
     state: ConnectionState = ConnectionState.CONNECTING;
     errorMessage: String = "";
     error: Error | null = null;
@@ -48,18 +48,17 @@ export class StartupComponent {
     }
 
     createNew() {
-        this.connectionInitializer.createNewConnection().then((error) => {
-            if (error != null) {
-                this.errorMessage = error.message;
-                this.error = error;
-                this.setState(ConnectionState.CRITICAL);
-            } else {
-                this.setState(ConnectionState.CONFIGURE);
-            }
-        })
+        this.connectionInitializer.createNewConnection().then(() => {
+            this.setState(ConnectionState.CONNECTED);
+            this.close();
+        }).catch((error: Error) => {
+            this.errorMessage = error.message;
+            this.error = error;
+            this.setState(ConnectionState.CRITICAL);
+        });
     }
 
     close() {
-        this.connectionStateEmitter.emit(this.error)
+        this.connectionStateEvent.emit(this.state);
     }
 }
