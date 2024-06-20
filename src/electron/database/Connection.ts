@@ -1,5 +1,5 @@
 import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
-import fs from "fs";
+import * as fs from "fs";
 
 export class Connection {
     private db?: Database;
