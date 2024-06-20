@@ -1,9 +1,7 @@
-import { Employee } from "../model/Employee";
-
-const { contextBridge, ipcRenderer } = require('electron')
+import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    getEmployees: () => <Promise<Employee[]>>ipcRenderer.invoke('get-employees'),
-    openConnection: () => <Promise<Error>>ipcRenderer.invoke("openConnection"),
-    createNewConnection: () => <Promise<Error>>ipcRenderer.invoke("createNewConnection"),
+    getEmployees: () => ipcRenderer.invoke('get-employees'),
+    openConnection: () => ipcRenderer.invoke("openConnection"),
+    createNewConnection: () => ipcRenderer.invoke("createNewConnection"),
 })

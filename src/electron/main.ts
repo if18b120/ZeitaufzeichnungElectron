@@ -1,7 +1,19 @@
-import { Employee } from "../model/Employee";
+import { Employee } from "../model/Employee.js";
 import { BrowserWindow, app, ipcMain } from "electron";
+
+import { createInjector } from "typed-inject";
+
 import * as path from "path";
 import * as url from "url";
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { Connection } from "./database/Connection.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const appInjector = createInjector().provideClass("connection", Connection);
 
 let win;
 function createWindow() {
@@ -35,6 +47,12 @@ app.whenReady().then(() => {
             new Employee("Jumps", "Over"),
             new Employee("Lazy", "Dog")
         ]
+    })
+    ipcMain.handle("openConnection", () => {
+        return appInjector.resolve("connection").open();
+    })
+    ipcMain.handle("createNewConnection", () => {
+        return appInjector.resolve("connection").create();
     })
     createWindow();
 })

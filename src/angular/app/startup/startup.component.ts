@@ -13,8 +13,8 @@ export class StartupComponent {
     @Output() connectionStateEmitter = new EventEmitter<Error | null>();
     state: ConnectionState = ConnectionState.CONNECTING;
     errorMessage: String = "";
-    error?: Error;
-    
+    error: Error | null = null;
+
     constructor(private connectionInitializer: ConnectionInitializerService) {
         this.establishConnection();
     }
@@ -22,21 +22,28 @@ export class StartupComponent {
     connectionStateEnum(): typeof ConnectionState {
         return ConnectionState;
     }
-    
+
+    setState(state: ConnectionState) {
+        console.log("Setting state to " + state);
+        this.state = state;
+    }
+
     establishConnection() {
         this.connectionInitializer.openConnection().then((error) => {
-            if (error !== null) {
-                this.state = ConnectionState.FAILED;
-                this.error = error;
-            } else {
-                this.state = ConnectionState.CONNECTED;
-                this.close();
-            }
+            console.log("connected");
+            console.log(error);
+            this.setState(ConnectionState.CONNECTED);
+            this.close();
+        }).catch((error) => {
+            console.log("connection failed");
+            console.log(error);
+            this.error = error;
+            this.setState(ConnectionState.FAILED);
         });
     }
-    
+
     abortInit() {
-        this.state = ConnectionState.CRITICAL;
+        this.setState(ConnectionState.CRITICAL);
         this.errorMessage = "Eine Datenbankverbindung ist für den Betrieb notwendig!"
     }
 
@@ -45,9 +52,9 @@ export class StartupComponent {
             if (error != null) {
                 this.errorMessage = error.message;
                 this.error = error;
-                this.state = ConnectionState.CRITICAL;
+                this.setState(ConnectionState.CRITICAL);
             } else {
-                this.state = ConnectionState.CONFIGURE;
+                this.setState(ConnectionState.CONFIGURE);
             }
         })
     }

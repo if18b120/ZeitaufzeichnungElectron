@@ -1,15 +1,54 @@
-import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
+import sqlite3 from "sqlite3";
+const { OPEN_READWRITE, OPEN_CREATE } = sqlite3;
 import * as fs from "fs";
 
 export class Connection {
-    private db?: Database;
+    private db?: sqlite3.Database;
 
-    open() {
-        this.db = new Database('./db/database.sqlite', OPEN_READWRITE);
+    open(): Promise<Error | null> {
+        return new Promise((resolve, reject) => {
+            this.db = new sqlite3.Database('./dist/database.sqlite', OPEN_READWRITE, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(null);
+                }
+            });
+        });
     }
 
-    create() {
-        this.db = new Database('./db/database.sqlite', OPEN_CREATE);
-        this.db.exec(fs.readFileSync(__dirname + '/sql/initial-state.sql').toString());
+    create(): Promise<Error | null>{
+        return new Promise<Error | null>((resolve, reject) => {
+            console.log(`Current directory: ${process.cwd()}`);
+            console.log(OPEN_CREATE);
+
+            this.db = new sqlite3.Database('./dist/database.sqlite', OPEN_READWRITE | OPEN_CREATE, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(null);
+                }
+            });
+        }).then(() => {
+            return new Promise<Error | null>((resolve, reject) => {
+                fs.readFile('./dist/initial-state.sql', 'utf8', (err, data) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        this.db?.exec(data, (err) => {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(null);
+                            }
+                        });
+                    }
+                });
+            });
+        }).catch((err: Error) => {
+            return new Promise<Error | null>((resolve) => {
+                resolve(err);
+            });
+        });
     }
 }
