@@ -1,0 +1,14 @@
+<div class="modal">
+    <div class="modal-header">
+
+    </div>
+    <div class="modal-body">
+        <modal-controller [componentType]="componentType" (acceptCallback)="acceptCallback($event)"
+            (cancelCallback)="cancelCallback($event)">
+        </modal-controller>
+    </div>
+    <div class="modal-footer">
+        <button (click)="accept()">Akzeptieren</button>
+        <button (click)="cancel()">Schließen</button>
+    </div>
+</div>

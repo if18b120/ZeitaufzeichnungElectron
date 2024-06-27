@@ -19,10 +19,15 @@ export class AppComponent {
     constructor(private terminatorService: TerminatorService) { }
 
     onDatabaseConnectionEstablished(state: ConnectionState) {
-        if (state === ConnectionState.CONNECTED) {
-            this.databaseConnectionEstablished = true;
-        } else {
-            this.terminatorService.shutdown();
+        switch (state) {
+            case ConnectionState.CONNECTED:
+                this.databaseConnectionEstablished = true;
+                break;
+            case ConnectionState.CRITICAL:
+                this.terminatorService.shutdown();
+                break;
+            default:
+                break;
         }
     }
 }
