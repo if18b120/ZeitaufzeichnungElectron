@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ConnectionInitializerService } from '../connection-initializer.service';
 import { ConnectionState } from '../../../model/ConnectionState';
+import { Modalable } from '../../../model/modal/Modalable';
 
 @Component({
     selector: 'startup',
@@ -9,42 +10,22 @@ import { ConnectionState } from '../../../model/ConnectionState';
     templateUrl: './startup.component.html',
     styleUrl: './startup.component.scss'
 })
-export class StartupComponent implements Modalable {
+export class StartupComponent extends Modalable {
     @Output() connectionStateEvent = new EventEmitter<ConnectionState>();
     state: ConnectionState = ConnectionState.CONNECTING;
     errorMessage: String = "";
     error: Error | null = null;
-    isModalable: boolean = true;
-
+    
     constructor(private connectionInitializer: ConnectionInitializerService) {
+        super();
         this.establishConnection();
     }
-
-    onUpdate(onUpdateCallback: Function): void {
-        throw new Error('Method not implemented.');
-    }
-
-    accept(): void {
-        throw new Error('Method not implemented.');
-    }
     
-    cancel(): void {
+    override acceptCallback(): void {
         throw new Error('Method not implemented.');
     }
 
-    acceptable(): boolean {
-        return true;
-    }
-
-    cancelable(): boolean {
-        return true;
-    }
-
-    acceptText(): string {
-        throw new Error('Method not implemented.');
-    }
-
-    cancelText(): string {
+    override cancelCallback(): void {
         throw new Error('Method not implemented.');
     }
 

@@ -3,12 +3,17 @@
 
     </div>
     <div class="modal-body">
-        <modal-controller [componentType]="componentType" (acceptCallback)="acceptCallback($event)"
-            (cancelCallback)="cancelCallback($event)">
+        <modal-controller [componentType]="componentType" (acceptCallback)="setAcceptCallback($event)"
+            (cancelCallback)="setCancelCallback($event)" [onUpdate]="onUpdate"
+            [onExit]="onExit">
         </modal-controller>
     </div>
     <div class="modal-footer">
-        <button (click)="accept()">Akzeptieren</button>
-        <button (click)="cancel()">Schließen</button>
+        @if (modalState.acceptable) {
+            <button (click)="accept()">{{modalState.acceptText}}</button>
+        }
+        @if (modalState.cancelable) {
+            <button (click)="cancel()">{{modalState.cancelText}}</button>
+        }
     </div>
 </div>
