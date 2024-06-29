@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, Type } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Modalable } from '../../../model/modal/Modalable';
-import { on } from 'events';
 
 @Component({
     selector: 'modal-controller',
@@ -19,6 +18,8 @@ export class ModalControllerComponent {
 
     @Output() acceptCallback = new EventEmitter<Function>();
     @Output() cancelCallback = new EventEmitter<Function>();
+
+    @Input() show: boolean = false;
 
     private modalable: Modalable;
 
@@ -39,5 +40,11 @@ export class ModalControllerComponent {
         this.cancelCallback.emit(this.modalable.cancel);
         this.modalable.onExit(this.onExit);
         this.modalable.onUpdate(this.onUpdate);
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['show'] !== undefined && changes['show'].currentValue === true && changes['show'].previousValue === false) {
+            this.modalable.onShowCallback();
+        }
     }
 }

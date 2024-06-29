@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { ConnectionInitializerService } from '../connection-initializer.service';
 import { ConnectionState } from '../../../model/ConnectionState';
 import { Modalable } from '../../../model/modal/Modalable';
+import { ModalExitState } from '../../../model/modal/ModalExitState';
 
 @Component({
     selector: 'startup',
@@ -18,15 +19,12 @@ export class StartupComponent extends Modalable {
     
     constructor(private connectionInitializer: ConnectionInitializerService) {
         super();
-        this.establishConnection();
-    }
-    
-    override acceptCallback(): void {
-        throw new Error('Method not implemented.');
+        this.modalState.acceptable = false;
+        this.modalState.cancelable = false;
     }
 
-    override cancelCallback(): void {
-        throw new Error('Method not implemented.');
+    override onShowCallback(): void {
+        this.establishConnection();
     }
 
     connectionStateEnum(): typeof ConnectionState {
@@ -39,16 +37,25 @@ export class StartupComponent extends Modalable {
     }
 
     establishConnection() {
-        this.connectionInitializer.openConnection().then((error) => {
-            console.log("connected");
-            console.log(error);
+        this.connectionInitializer.openConnection().then(() => {
             this.setState(ConnectionState.CONNECTED);
-            this.close();
+            this.exit(ModalExitState.SUCCESS);
         }).catch((error) => {
-            console.log("connection failed");
             console.log(error);
             this.error = error;
             this.setState(ConnectionState.FAILED);
+
+            this.setAcceptable(true);
+            this.setAcceptText("Neue Verbindung erstellen");
+            this.acceptCallback = () => {
+                this.createNew();
+            }
+
+            this.setCancelable(true);
+            this.setCancelText("Beenden");
+            this.cancelCallback = () => {
+                this.exit(ModalExitState.SHUTDOWN);
+            }
         });
     }
 
@@ -65,9 +72,5 @@ export class StartupComponent extends Modalable {
             this.error = error;
             this.setState(ConnectionState.CRITICAL);
         });
-    }
-
-    close() {
-        this.connectionStateEvent.emit(this.state);
     }
 }

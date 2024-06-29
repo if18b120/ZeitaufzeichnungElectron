@@ -1,4 +1,4 @@
 export enum ModalExitState {
-    SHUTDOWN,
-    CLOSE
+    SUCCESS,
+    SHUTDOWN
 }

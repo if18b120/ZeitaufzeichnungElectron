@@ -4,6 +4,9 @@ import { ModalState } from "./ModalState";
 export abstract class Modalable {
     isModalable: boolean = true;
 
+    acceptCallback: Function | null = null;
+    cancelCallback: Function | null = null;
+
     exitCallback: Function | null = null;
     updateCallback: Function | null = null;
 
@@ -14,8 +17,7 @@ export abstract class Modalable {
         cancelable: false
     }
 
-    abstract acceptCallback(): void;
-    abstract cancelCallback(): void;
+    abstract onShowCallback(): void;
 
     setAcceptText(text: string): void {
         this.modalState.acceptText = text;
@@ -38,11 +40,15 @@ export abstract class Modalable {
     }
 
     accept(): void {
-        this.acceptCallback();
+        if (this.acceptCallback !== null) {
+            this.acceptCallback();
+        }
     }
 
     cancel(): void {
-        this.cancelCallback();
+        if (this.cancelCallback !== null) {
+            this.cancelCallback();
+        }
     }
 
     onExit(exitCallback: Function): void {
