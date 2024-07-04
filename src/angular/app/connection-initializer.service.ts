@@ -14,4 +14,12 @@ export class ConnectionInitializerService {
     createNewConnection(): Promise<Error | null> {
         return (<any>window).electronAPI.createNewConnection();
     }
+
+    configureAdminPassword(): Promise<Error | null> {
+        return (<any>window).electronAPI.configureAdminPassword();
+    }
+
+    checkAdminPassword(): Promise<Error | null> {
+        return (<any>window).electronAPI.checkAdminPassword();
+    }
 }

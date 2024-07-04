@@ -1,19 +1,21 @@
-<div class="modal">
+<div class="modal" [class.show]="isVisible">
     <div class="modal-header">
 
     </div>
     <div class="modal-body">
-        <modal-controller [componentType]="componentType" (acceptCallback)="setAcceptCallback($event)"
-            (cancelCallback)="setCancelCallback($event)" [onUpdate]="onUpdate"
-            [onExit]="onExit">
+        <modal-controller [componentType]="componentType" [onShowObservable]="onShowSubject.asObservable()" 
+            [acceptObservable]="acceptSubject.asObservable()" [cancelObservable]="cancelSubject.asObservable()"
+            (acceptableObservable)="setAcceptableObservable($event)" (cancelableObservable)="setCancelableObservable($event)"
+            (acceptTextObservable)="setAcceptTextObservable($event)" (cancelTextObservable)="setCancelTextObservable($event)" 
+            (exitObservable)="setExitObservable($event)">
         </modal-controller>
     </div>
     <div class="modal-footer">
-        @if (modalState.acceptable) {
-            <button (click)="accept()">{{modalState.acceptText}}</button>
+        @if (modalState.acceptable !== modalButtonStateEnum.NONE) {
+            <button (click)="acceptSubject.next(true)" [disabled]="modalState.acceptable === modalButtonStateEnum.NONCLICKABLE">{{modalState.acceptText}}</button>
         }
-        @if (modalState.cancelable) {
-            <button (click)="cancel()">{{modalState.cancelText}}</button>
+        @if (modalState.cancelable !== modalButtonStateEnum.NONE) {
+            <button (click)="cancelSubject.next(true)" [disabled]="modalState.cancelable === modalButtonStateEnum.NONCLICKABLE">{{modalState.cancelText}}</button>
         }
     </div>
 </div>

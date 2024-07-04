@@ -1,6 +1,7 @@
 import { Observable, Subject } from "rxjs";
 import { ModalExitState } from "./ModalExitState";
 import { ModalState } from "./ModalState";
+import { ModalButtonState } from "./ModalButtonState";
 
 export abstract class Modalable {
     isModalable: boolean = true;
@@ -11,8 +12,8 @@ export abstract class Modalable {
         onShow: null as Observable<boolean> | null
     }
 
-    protected acceptableSubject: Subject<boolean> = new Subject<boolean>();
-    protected cancelableSubject: Subject<boolean> = new Subject<boolean>();
+    protected acceptableSubject: Subject<ModalButtonState> = new Subject<ModalButtonState>();
+    protected cancelableSubject: Subject<ModalButtonState> = new Subject<ModalButtonState>();
     protected acceptTextSubject: Subject<string> = new Subject<string>();
     protected cancelTextSubject: Subject<string> = new Subject<string>();
     protected exitSubject: Subject<ModalExitState> = new Subject<ModalExitState>();

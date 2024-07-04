@@ -1,26 +1,33 @@
-
-@switch (state) {
-    @case (connectionStateEnum().CONNECTING) {
-        <div>Datenbankverbindung wird aufgebaut...</div>
-    }
-    @case (connectionStateEnum().FAILED) {
-        <div>
+<div>
+    @switch (state) {
+        @case (connectionStateEnum().CONNECTING) {
+            <div>Datenbankverbindung wird aufgebaut...</div>
+        }
+        @case (connectionStateEnum().FAILED) {
             <div>
-                Es konnte keine Datenbankverbindung hergestellt werden!
+                <div>
+                    Es konnte keine Datenbankverbindung hergestellt werden!
+                </div>
+                <div>
+                    Soll eine neue Datenbank erstellt werden? Eine neue Datenbank sollte nur erstellt werden, falls noch keine
+                    Vorhanden ist!
+                </div>
             </div>
-            <div>
-                Soll eine neue Datenbank erstellt werden? Eine neue Datenbank sollte nur erstellt werden, falls noch keine Vorhanden ist!
-            </div>
-        </div>
+        }
+        @case (connectionStateEnum().CRITICAL) {
+            <div>Ein kritischer Fehler ist aufgetreten</div>
+            <div>{{errorMessage}}</div>
+        }
+        @case (connectionStateEnum().CONFIGURE) {
+            <span>Die Datenbank wurde erstellt. Ein Admininistrationspasswort ist notwendig, um die Konfguration abzuschlie&szlig;en</span>
+            <input type="password" placeholder="Passwort..." [(ngModel)]="adminPW" (ngModelChange)="comparePasswords()">
+            @if (!passwordsMatch && adminPWRepeat !== "") {
+                <p id="passwordError">Passwort muss &uuml;bereinstimmen!</p>
+            }
+            <input type="password" placeholder="Passwort wiederholen..." [(ngModel)]="adminPWRepeat" (ngModelChange)="comparePasswords()">
+        }
+        @default {
+            <div>Ein unerwarteter Zustand ist eingetreten!</div>
+        }
     }
-    @case (connectionStateEnum().CRITICAL) {
-        <div>Ein kritischer Fehler ist aufgetreten</div>
-        <div>{{errorMessage}}</div>
-    }
-    @case (connectionStateEnum().CONFIGURE) {
-
-    }
-    @default {
-        <div>Ein unerwarteter Zustand ist eingetreten!</div>
-    }
-}
+</div>

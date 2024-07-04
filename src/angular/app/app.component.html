@@ -1,6 +1,4 @@
-@if (!databaseConnectionEstablished) {
-    <startup (connectionStateEvent)="onDatabaseConnectionEstablished($event)"></startup>
-} @else {
-    <employee-select></employee-select>
-    <calendar></calendar>
-}
+<modal [componentType]="startupComponent" [isVisible]="showStartupModal" (exit)="exit($event)"></modal>
+<button (click)="makeVisible()">FOOOOO</button>
+<!-- <employee-select></employee-select>
+<calendar></calendar> -->
