@@ -1,73 +1,29 @@
+import { Observable, Subject } from "rxjs";
 import { ModalExitState } from "./ModalExitState";
 import { ModalState } from "./ModalState";
 
 export abstract class Modalable {
     isModalable: boolean = true;
 
-    acceptCallback: Function | null = null;
-    cancelCallback: Function | null = null;
-
-    exitCallback: Function | null = null;
-    updateCallback: Function | null = null;
-
-    modalState: ModalState = {
-        acceptText: "",
-        cancelText: "",
-        acceptable: false,
-        cancelable: false
+    input = {
+        accept: null as Observable<boolean> | null,
+        cancel: null as Observable<boolean> | null,
+        onShow: null as Observable<boolean> | null
     }
 
-    abstract onShowCallback(): void;
+    protected acceptableSubject: Subject<boolean> = new Subject<boolean>();
+    protected cancelableSubject: Subject<boolean> = new Subject<boolean>();
+    protected acceptTextSubject: Subject<string> = new Subject<string>();
+    protected cancelTextSubject: Subject<string> = new Subject<string>();
+    protected exitSubject: Subject<ModalExitState> = new Subject<ModalExitState>();
 
-    setAcceptText(text: string): void {
-        this.modalState.acceptText = text;
-        this.update();
+    output = {
+        acceptable: this.acceptableSubject.asObservable(),
+        cancelable: this.cancelableSubject.asObservable(),
+        acceptText: this.acceptTextSubject.asObservable(),
+        cancelText: this.cancelTextSubject.asObservable(),
+        exit: this.exitSubject.asObservable()
     }
 
-    setCancelText(text: string): void {
-        this.modalState.cancelText = text;
-        this.update();
-    }
-
-    setAcceptable(acceptable: boolean): void {
-        this.modalState.acceptable = acceptable;
-        this.update();
-    }
-
-    setCancelable(cancelable: boolean): void {
-        this.modalState.cancelable = cancelable;
-        this.update();
-    }
-
-    accept(): void {
-        if (this.acceptCallback !== null) {
-            this.acceptCallback();
-        }
-    }
-
-    cancel(): void {
-        if (this.cancelCallback !== null) {
-            this.cancelCallback();
-        }
-    }
-
-    onExit(exitCallback: Function): void {
-        this.exitCallback = exitCallback;
-    }
-
-    exit(exitState: ModalExitState): void {
-        if (this.exitCallback !== null) {
-            this.exitCallback(exitState);
-        }
-    }
-
-    onUpdate(onUpdateCallback: Function): void {
-        this.updateCallback = onUpdateCallback;
-    }
-
-    update(): void {
-        if (this.updateCallback !== null) {
-            this.updateCallback(this.modalState);
-        }
-    }
+    abstract afterInit(): void;
 }

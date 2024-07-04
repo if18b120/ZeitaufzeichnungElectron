@@ -12,19 +12,39 @@ import { ModalExitState } from '../../../model/modal/ModalExitState';
     styleUrl: './startup.component.scss'
 })
 export class StartupComponent extends Modalable {
-    @Output() connectionStateEvent = new EventEmitter<ConnectionState>();
     state: ConnectionState = ConnectionState.CONNECTING;
     errorMessage: String = "";
     error: Error | null = null;
+    private acceptCallback: Function = () => {};
+    private cancelCallback: Function = () => {};
     
     constructor(private connectionInitializer: ConnectionInitializerService) {
         super();
-        this.modalState.acceptable = false;
-        this.modalState.cancelable = false;
     }
 
-    override onShowCallback(): void {
-        this.establishConnection();
+    override afterInit() {
+        this.acceptableSubject.next(false);
+        this.acceptTextSubject.next("");
+        this.cancelableSubject.next(false);
+        this.cancelTextSubject.next("");
+        
+        this.input.onShow?.subscribe((show: boolean) => {
+            if (show && this.state === ConnectionState.CONNECTING) {
+                this.establishConnection();
+            }
+        });
+
+        this.input.accept?.subscribe((accept: boolean) => {
+            if (accept) {
+                this.acceptCallback();
+            }
+        });
+
+        this.input.cancel?.subscribe((cancel: boolean) => {
+            if (cancel) {
+                this.cancelCallback();
+            }
+        });
     }
 
     connectionStateEnum(): typeof ConnectionState {
@@ -39,22 +59,22 @@ export class StartupComponent extends Modalable {
     establishConnection() {
         this.connectionInitializer.openConnection().then(() => {
             this.setState(ConnectionState.CONNECTED);
-            this.exit(ModalExitState.SUCCESS);
+            this.exitSubject.next(ModalExitState.SUCCESS);
         }).catch((error) => {
             console.log(error);
             this.error = error;
             this.setState(ConnectionState.FAILED);
 
-            this.setAcceptable(true);
-            this.setAcceptText("Neue Verbindung erstellen");
+            this.acceptableSubject.next(true);
+            this.acceptTextSubject.next("Neue Verbindung erstellen");
             this.acceptCallback = () => {
                 this.createNew();
             }
 
-            this.setCancelable(true);
-            this.setCancelText("Beenden");
+            this.cancelableSubject.next(true);
+            this.cancelTextSubject.next("Beenden");
             this.cancelCallback = () => {
-                this.exit(ModalExitState.SHUTDOWN);
+                this.exitSubject.next(ModalExitState.SHUTDOWN);
             }
         });
     }
