@@ -31,6 +31,7 @@ export class ModalComponent {
     cancelSubject: Subject<boolean> = new Subject<boolean>();
 
     modalState: ModalState = {
+        title: "",
         acceptable: ModalButtonState.NONE,
         cancelable: ModalButtonState.NONE,
         acceptText: "",
@@ -72,6 +73,12 @@ export class ModalComponent {
     setExitObservable(observable: Observable<ModalExitState>) {
         observable.subscribe((value: ModalExitState) => {
             this.exit.emit(value);
+        });
+    }
+
+    setTitleObservable(observable: Observable<string>) {
+        observable.subscribe((value: string) => {
+            this.modalState.title = value;
         });
     }
 }

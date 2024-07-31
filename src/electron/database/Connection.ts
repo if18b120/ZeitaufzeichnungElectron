@@ -1,6 +1,7 @@
 import sqlite3 from "sqlite3";
 const { OPEN_READWRITE, OPEN_CREATE } = sqlite3;
 import * as fs from "fs";
+import { AdminDto } from "../../model/dto/AdminDto";
 
 export class Connection {
     private db?: sqlite3.Database;
@@ -17,41 +18,64 @@ export class Connection {
         });
     }
 
-    create(): Promise<Error | null>{
-        return new Promise<Error | null>((resolve, reject) => {
-            console.log(`Current directory: ${process.cwd()}`);
-            console.log(OPEN_CREATE);
-
+    create(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             this.db = new sqlite3.Database('./dist/database.sqlite', OPEN_READWRITE | OPEN_CREATE, (err) => {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(null);
+                    resolve();
                 }
             });
         }).then(() => {
-            return new Promise<Error | null>((resolve, reject) => {
-                fs.readFile('./dist/initial-state.sql', 'utf8', (err, data) => {
+            fs.readFile('./dist/initial-state.sql', 'utf8', (err, data) => {
+                if (err) {
+                    throw err;
+                }
+                this.db?.exec(data, (err) => {
                     if (err) {
-                        reject(err);
-                    } else {
-                        this.db?.exec(data, (err) => {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(null);
-                            }
-                        });
+                        throw err;
                     }
                 });
             });
-        }).catch((err: Error) => {
-            return new Promise<Error | null>((resolve) => {
-                resolve(err);
+        })
+    }
+
+    checkAdminPassword(): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.db?.get("SELECT * FROM ADMIN", (err, row: AdminDto) => {
+                console.log(err);
+                console.log(row);
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row !== undefined);
+                }
             });
         });
     }
 
+    insertAdminPassword(password: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.db?.get("SELECT * FROM ADMIN", (err, row: AdminDto) => {
+                if (err) {
+                    reject(err);
+                } else if (row !== undefined) {
+                    reject(new Error("Admin row already exists!"));
+                } else {
+                    resolve();
+                }
+            });
+        }).then(() => {
+            console.log(password);
+            this.db?.run("INSERT INTO ADMIN (PASSWORD) VALUES (?)", [password], (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
+        });
+
+    }
     close() {
         this.db?.close();
     }

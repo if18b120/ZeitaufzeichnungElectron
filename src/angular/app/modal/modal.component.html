@@ -1,21 +1,23 @@
-<div class="modal" [class.show]="isVisible">
-    <div class="modal-header">
-
-    </div>
-    <div class="modal-body">
-        <modal-controller [componentType]="componentType" [onShowObservable]="onShowSubject.asObservable()" 
-            [acceptObservable]="acceptSubject.asObservable()" [cancelObservable]="cancelSubject.asObservable()"
-            (acceptableObservable)="setAcceptableObservable($event)" (cancelableObservable)="setCancelableObservable($event)"
-            (acceptTextObservable)="setAcceptTextObservable($event)" (cancelTextObservable)="setCancelTextObservable($event)" 
-            (exitObservable)="setExitObservable($event)">
-        </modal-controller>
-    </div>
-    <div class="modal-footer">
-        @if (modalState.acceptable !== modalButtonStateEnum.NONE) {
-            <button (click)="acceptSubject.next(true)" [disabled]="modalState.acceptable === modalButtonStateEnum.NONCLICKABLE">{{modalState.acceptText}}</button>
-        }
-        @if (modalState.cancelable !== modalButtonStateEnum.NONE) {
-            <button (click)="cancelSubject.next(true)" [disabled]="modalState.cancelable === modalButtonStateEnum.NONCLICKABLE">{{modalState.cancelText}}</button>
-        }
+<div class="" [ngClass]="{'flex': isVisible, 'hidden': !isVisible}" class="fixed top-0 left-0 w-full h-full items-center justify-center bg-black/50">
+    <div class="bg-orange-400 mx-3 rounded-xl">
+        <div class="ml-3 my-2">
+            {{modalState.title}}
+        </div>
+        <div class="bg-white px-8 py-4">
+            <modal-controller [componentType]="componentType" [onShowObservable]="onShowSubject.asObservable()" 
+                [acceptObservable]="acceptSubject.asObservable()" [cancelObservable]="cancelSubject.asObservable()"
+                (acceptableObservable)="setAcceptableObservable($event)" (cancelableObservable)="setCancelableObservable($event)"
+                (acceptTextObservable)="setAcceptTextObservable($event)" (cancelTextObservable)="setCancelTextObservable($event)" 
+                (exitObservable)="setExitObservable($event)" (titleObservable)="setTitleObservable($event)">
+            </modal-controller>
+        </div>
+        <div class="flex flex-row flex-nowrap justify-between">
+            @if (modalState.acceptable !== modalButtonStateEnum.NONE) {
+                <button class="ml-3 my-2 py-1 px-2 rounded-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-800" (click)="acceptSubject.next(true)" [disabled]="modalState.acceptable === modalButtonStateEnum.NONCLICKABLE">{{modalState.acceptText}}</button>
+            }
+            @if (modalState.cancelable !== modalButtonStateEnum.NONE) {
+                <button class="mr-3 my-2 py-1 px-2 rounded-full bg-red-600 hover:bg-red-700" (click)="cancelSubject.next(true)" [disabled]="modalState.cancelable === modalButtonStateEnum.NONCLICKABLE">{{modalState.cancelText}}</button>
+            }
+        </div>
     </div>
 </div>

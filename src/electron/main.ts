@@ -1,5 +1,5 @@
 import { Employee } from "../model/Employee.js";
-import { BrowserWindow, app, ipcMain } from "electron";
+import { BrowserWindow, IpcMainInvokeEvent, app, ipcMain } from "electron";
 
 import { createInjector } from "typed-inject";
 
@@ -47,17 +47,34 @@ app.whenReady().then(() => {
             new Employee("Jumps", "Over"),
             new Employee("Lazy", "Dog")
         ]
-    })
+    });
+
     ipcMain.handle("openConnection", () => {
+        console.log("Opening connection");
         return appInjector.resolve("connection").open();
-    })
+    });
+
+    ipcMain.handle("isAdminPasswordSet", () => {
+        console.log("Checking if admin password is set");
+        return appInjector.resolve("connection").checkAdminPassword();
+    });
+
     ipcMain.handle("createNewConnection", () => {
+        console.log("Creating new connection");
         return appInjector.resolve("connection").create();
-    })
+    });
+
+    ipcMain.handle("configureAdminPassword", (event: IpcMainInvokeEvent, password: string) => {
+        console.log(password);
+        return appInjector.resolve("connection").insertAdminPassword(password);
+    });
+
     ipcMain.handle("shutdown", () => {
+        console.log("Shutting down");
         appInjector.resolve("connection").close();
         app.quit();
-    })
+    });
+
     createWindow();
 })
 // app.on("ready", createWindow);

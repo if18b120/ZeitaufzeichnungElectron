@@ -25,6 +25,7 @@ export class ModalControllerComponent {
     @Output() acceptTextObservable = new EventEmitter<Observable<string>>();
     @Output() cancelTextObservable = new EventEmitter<Observable<string>>();
     @Output() exitObservable = new EventEmitter<Observable<ModalExitState>>();
+    @Output() titleObservable = new EventEmitter<Observable<string>>();
 
     private modalable: Modalable | null = null;
     private initialized: boolean = false;
@@ -50,6 +51,7 @@ export class ModalControllerComponent {
             this.modalable.input.cancel = this.cancelObservable;
             this.modalable.input.onShow = this.onShowObservable;
 
+            this.titleObservable.emit(this.modalable.output.title);
             this.acceptableObservable.emit(this.modalable.output.acceptable);
             this.cancelableObservable.emit(this.modalable.output.cancelable);
             this.acceptTextObservable.emit(this.modalable.output.acceptText);

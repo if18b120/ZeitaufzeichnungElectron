@@ -5,18 +5,18 @@ import { Modalable } from '../../../model/modal/Modalable';
 import { ModalExitState } from '../../../model/modal/ModalExitState';
 import { FormsModule } from '@angular/forms';
 import { ModalButtonState } from '../../../model/modal/ModalButtonState';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'startup',
     standalone: true,
-    imports: [FormsModule],
+    imports: [FormsModule, CommonModule],
     templateUrl: './startup.component.html',
     styleUrl: './startup.component.scss'
 })
 export class StartupComponent extends Modalable {
     state: ConnectionState = ConnectionState.CONNECTING;
     errorMessage: String = "";
-    error: Error | null = null;
     private acceptCallback: Function = () => { };
     private cancelCallback: Function = () => { };
     adminPW: string = "";
@@ -28,6 +28,7 @@ export class StartupComponent extends Modalable {
     }
 
     override afterInit() {
+        this.titleSubject.next("");
         this.acceptableSubject.next(ModalButtonState.NONE);
         this.acceptTextSubject.next("");
         this.cancelableSubject.next(ModalButtonState.NONE);
@@ -63,58 +64,86 @@ export class StartupComponent extends Modalable {
 
     establishConnection() {
         this.connectionInitializer.openConnection().then(() => {
-            this.setState(ConnectionState.CONNECTED);
-            this.exitSubject.next(ModalExitState.SUCCESS);
-        }).catch((error) => {
-            console.log(error);
-            this.error = error;
-            this.setState(ConnectionState.FAILED);
-
-            this.acceptableSubject.next(ModalButtonState.CLICKABLE);
-            this.acceptTextSubject.next("Neue Verbindung erstellen");
-            this.acceptCallback = () => {
-                this.createNew();
-            }
-
-            this.cancelableSubject.next(ModalButtonState.CLICKABLE);
-            this.cancelTextSubject.next("Beenden");
-            this.cancelCallback = () => {
-                this.exitSubject.next(ModalExitState.SHUTDOWN);
-            }
+            this.connectionInitializer.isAdminPasswordSet().then((isSet) => {
+                if (isSet) {
+                    this.setConnectedState();
+                } else {
+                    this.setConfigureState();
+                }
+            }).catch((error: Error) => {
+                this.setCrititcalState(error);
+            });
+        }).catch((error: Error) => {
+            this.setFailedState();
         });
     }
-
-    abortInit() {
-        this.setState(ConnectionState.CRITICAL);
-        this.errorMessage = "Eine Datenbankverbindung ist für den Betrieb notwendig!"
-    }
-
+    
     createNew() {
         this.connectionInitializer.createNewConnection().then(() => {
-            this.setState(ConnectionState.CONFIGURE);
-
-            this.acceptableSubject.next(ModalButtonState.NONCLICKABLE);
-            this.acceptTextSubject.next("Konfigurieren");
-            this.acceptCallback = () => {
-                this.configure();
-            }
-
-            this.cancelableSubject.next(ModalButtonState.CLICKABLE);
-            this.cancelTextSubject.next("Beenden");
-            this.cancelCallback = () => {
-                this.exitSubject.next(ModalExitState.SHUTDOWN);
-            }
+            this.setConfigureState();
         }).catch((error: Error) => {
-            this.errorMessage = error.message;
-            this.error = error;
-            this.setState(ConnectionState.CRITICAL);
+            this.setCrititcalState(error);
         });
     }
 
-    configure() {
-        this.connectionInitializer.configureAdminPassword().then(() => {
-        }).catch((error: Error) => {
-        });
+    setConfigureState() {
+        this.setState(ConnectionState.CONFIGURE);
+        
+        this.titleSubject.next("Konfiguration");
+        this.acceptableSubject.next(ModalButtonState.NONCLICKABLE);
+        this.acceptTextSubject.next("Konfigurieren");
+        this.acceptCallback = () => {
+            this.connectionInitializer.configureAdminPassword(this.adminPW).then(() => {
+                this.setConnectedState();
+            }).catch((error: Error) => {
+                
+            });
+        }
+        
+        this.cancelableSubject.next(ModalButtonState.CLICKABLE);
+        this.cancelTextSubject.next("Beenden");
+        this.cancelCallback = () => {
+            this.abortInit();
+        }
+    }
+
+    setConnectedState(): void {
+        this.setState(ConnectionState.CONNECTED);
+        this.exitSubject.next(ModalExitState.SUCCESS);
+    }
+    
+    abortInit() {
+        this.setCrititcalState(new Error("Der Verbindungsaufbau wurde abgebrochen!"));
+    }
+
+    setCrititcalState(error: Error): void {
+        this.setState(ConnectionState.CRITICAL);
+        this.titleSubject.next("Ein Unerwarteter Fehler ist aufgetreten!");
+        this.acceptableSubject.next(ModalButtonState.NONE);
+
+        this.cancelableSubject.next(ModalButtonState.CLICKABLE);
+        this.cancelTextSubject.next("Beenden");
+        this.cancelCallback = () => {
+            this.exitSubject.next(ModalExitState.SHUTDOWN);
+        }
+        this.errorMessage = error.message;
+    }
+
+    setFailedState(): void {
+        this.setState(ConnectionState.FAILED);
+
+        this.titleSubject.next("Verbindungsaufbau fehlgeschlagen!");
+        this.acceptableSubject.next(ModalButtonState.CLICKABLE);
+        this.acceptTextSubject.next("Neue Verbindung erstellen");
+        this.acceptCallback = () => {
+            this.createNew();
+        }
+
+        this.cancelableSubject.next(ModalButtonState.CLICKABLE);
+        this.cancelTextSubject.next("Beenden");
+        this.cancelCallback = () => {
+            this.exitSubject.next(ModalExitState.SHUTDOWN);
+        }
     }
 
     comparePasswords() {

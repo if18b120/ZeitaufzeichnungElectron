@@ -7,19 +7,19 @@ export class ConnectionInitializerService {
 
     constructor() { }
 
-    openConnection(): Promise<Error | null> {
+    openConnection(): Promise<void> {
         return (<any>window).electronAPI.openConnection();
     }
 
-    createNewConnection(): Promise<Error | null> {
+    createNewConnection(): Promise<void> {
         return (<any>window).electronAPI.createNewConnection();
     }
 
-    configureAdminPassword(): Promise<Error | null> {
-        return (<any>window).electronAPI.configureAdminPassword();
+    configureAdminPassword(password: String): Promise<void> {
+        return (<any>window).electronAPI.configureAdminPassword(password);
     }
 
-    checkAdminPassword(): Promise<Error | null> {
-        return (<any>window).electronAPI.checkAdminPassword();
+    isAdminPasswordSet(): Promise<boolean> {
+        return (<any>window).electronAPI.isAdminPasswordSet();
     }
 }
