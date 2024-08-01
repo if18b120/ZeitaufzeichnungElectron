@@ -8,7 +8,8 @@
                 [acceptObservable]="acceptSubject.asObservable()" [cancelObservable]="cancelSubject.asObservable()"
                 (acceptableObservable)="setAcceptableObservable($event)" (cancelableObservable)="setCancelableObservable($event)"
                 (acceptTextObservable)="setAcceptTextObservable($event)" (cancelTextObservable)="setCancelTextObservable($event)" 
-                (exitObservable)="setExitObservable($event)" (titleObservable)="setTitleObservable($event)">
+                (exitObservable)="setExitObservable($event)" (titleObservable)="setTitleObservable($event)"
+                [isVisible]="isVisible">
             </modal-controller>
         </div>
         <div class="flex flex-row flex-nowrap justify-between">

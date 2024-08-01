@@ -14,7 +14,7 @@ import { ModalButtonState } from "../../../model/modal/ModalButtonState";
 export class ModalControllerComponent {
     @Input() componentType: Type<unknown> | null = null;
 
-    @Input() show: boolean = false;
+    @Input() isVisible: boolean = false;
 
     @Input() onShowObservable: Observable<boolean> | null = null;
     @Input() acceptObservable: Observable<boolean> | null = null;
@@ -43,21 +43,25 @@ export class ModalControllerComponent {
             this.modalable.input.cancel = this.cancelObservable;
         }
         if (this.componentType && this.onShowObservable && this.acceptObservable && this.cancelObservable && !this.initialized) {
-            this.initialized = true;
-            let component = this.viewRef.createComponent(this.componentType);
-            this.modalable = component.instance as Modalable;
-
-            this.modalable.input.accept = this.acceptObservable;
-            this.modalable.input.cancel = this.cancelObservable;
-            this.modalable.input.onShow = this.onShowObservable;
-
-            this.titleObservable.emit(this.modalable.output.title);
-            this.acceptableObservable.emit(this.modalable.output.acceptable);
-            this.cancelableObservable.emit(this.modalable.output.cancelable);
-            this.acceptTextObservable.emit(this.modalable.output.acceptText);
-            this.cancelTextObservable.emit(this.modalable.output.cancelText);
-            this.exitObservable.emit(this.modalable.output.exit);
-            this.modalable.afterInit();
+            this.initialize(this.componentType);
         }
+    }
+
+    initialize(componentType: Type<unknown>): void {
+        this.initialized = true;
+        let component = this.viewRef.createComponent(componentType);
+        this.modalable = component.instance as Modalable;
+
+        this.modalable.input.accept = this.acceptObservable;
+        this.modalable.input.cancel = this.cancelObservable;
+        this.modalable.input.onShow = this.onShowObservable;
+
+        this.titleObservable.emit(this.modalable.output.title);
+        this.acceptableObservable.emit(this.modalable.output.acceptable);
+        this.cancelableObservable.emit(this.modalable.output.cancelable);
+        this.acceptTextObservable.emit(this.modalable.output.acceptText);
+        this.cancelTextObservable.emit(this.modalable.output.cancelText);
+        this.exitObservable.emit(this.modalable.output.exit);
+        this.modalable.afterInit();
     }
 }

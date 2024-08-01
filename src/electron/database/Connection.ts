@@ -44,8 +44,6 @@ export class Connection {
     checkAdminPassword(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this.db?.get("SELECT * FROM ADMIN", (err, row: AdminDto) => {
-                console.log(err);
-                console.log(row);
                 if (err) {
                     reject(err);
                 } else {
@@ -67,7 +65,6 @@ export class Connection {
                 }
             });
         }).then(() => {
-            console.log(password);
             this.db?.run("INSERT INTO ADMIN (PASSWORD) VALUES (?)", [password], (err) => {
                 if (err) {
                     throw err;

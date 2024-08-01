@@ -50,27 +50,22 @@ app.whenReady().then(() => {
     });
 
     ipcMain.handle("openConnection", () => {
-        console.log("Opening connection");
         return appInjector.resolve("connection").open();
     });
 
     ipcMain.handle("isAdminPasswordSet", () => {
-        console.log("Checking if admin password is set");
         return appInjector.resolve("connection").checkAdminPassword();
     });
 
     ipcMain.handle("createNewConnection", () => {
-        console.log("Creating new connection");
         return appInjector.resolve("connection").create();
     });
 
     ipcMain.handle("configureAdminPassword", (event: IpcMainInvokeEvent, password: string) => {
-        console.log(password);
         return appInjector.resolve("connection").insertAdminPassword(password);
     });
 
     ipcMain.handle("shutdown", () => {
-        console.log("Shutting down");
         appInjector.resolve("connection").close();
         app.quit();
     });

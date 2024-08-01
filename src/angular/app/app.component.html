@@ -1,4 +1,3 @@
-<modal [componentType]="startupComponent" [isVisible]="showStartupModal" (exit)="exit($event)"></modal>
-<button (click)="makeVisible()">FOOOOO</button>
-<!-- <employee-select></employee-select>
-<calendar></calendar> -->
+<modal [componentType]="startupComponent" [isVisible]="showStartupModal" (exit)="closeModal($event)"></modal>
+<employee-select></employee-select>
+<calendar></calendar>

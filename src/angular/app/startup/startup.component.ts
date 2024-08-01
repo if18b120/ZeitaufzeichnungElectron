@@ -25,6 +25,7 @@ export class StartupComponent extends Modalable {
 
     constructor(private connectionInitializer: ConnectionInitializerService) {
         super();
+        this.establishConnection();
     }
 
     override afterInit() {
@@ -33,12 +34,6 @@ export class StartupComponent extends Modalable {
         this.acceptTextSubject.next("");
         this.cancelableSubject.next(ModalButtonState.NONE);
         this.cancelTextSubject.next("");
-
-        this.input.onShow?.subscribe((show: boolean) => {
-            if (show && this.state === ConnectionState.CONNECTING) {
-                this.establishConnection();
-            }
-        });
 
         this.input.accept?.subscribe((accept: boolean) => {
             if (accept) {
@@ -58,7 +53,6 @@ export class StartupComponent extends Modalable {
     }
 
     setState(state: ConnectionState) {
-        console.log("Setting state to " + state);
         this.state = state;
     }
 

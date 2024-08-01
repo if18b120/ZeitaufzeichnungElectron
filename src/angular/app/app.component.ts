@@ -23,7 +23,7 @@ import { ModalExitState } from "../../model/modal/ModalExitState";
 })
 export class AppComponent {
     databaseConnectionEstablished = false;
-    showStartupModal = false;
+    showStartupModal = true;
     startupComponent: Type<unknown> = StartupComponent;
 
     constructor(private terminatorService: TerminatorService) { }
@@ -41,15 +41,11 @@ export class AppComponent {
         }
     }
 
-    exit($event: ModalExitState) {
+    closeModal($event: ModalExitState) {
         if ($event === ModalExitState.SUCCESS) {
             this.showStartupModal = false;
         } else {
             this.terminatorService.shutdown();
         }
-    }
-
-    makeVisible() {
-        this.showStartupModal = true;
     }
 }
